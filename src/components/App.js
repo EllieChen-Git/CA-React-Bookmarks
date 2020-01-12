@@ -4,21 +4,33 @@ import "./../styles/App.css";
 import RegisterPage from "./pages/RegisterPage";
 import HomePage from "./pages/HomePage";
 import NotFoundPage from "./pages/NotFoundPage";
+import BookmarksPage from "./pages/BookmarksPage";
+import PrivateRoute from "./PrivateRoute";
+import { connect } from "react-redux";
 
 class App extends Component {
-    render() {
-        return (
-            <BrowserRouter>
-                <div>
-                    <Switch>
-                        <Route exact path="/" component={HomePage} />
-                        <Route exact path="/register" component={RegisterPage} />
-                        <Route component={NotFoundPage} />
-                    </Switch>
-                </div>
-            </BrowserRouter>
-        );
-    }
+  render() {
+    const { token } = this.props;
+    return (
+      <BrowserRouter>
+        <div>
+          {token && <h4>User is logged in!</h4>}
+          <Switch>
+            <Route exact path="/" component={HomePage} />
+            <Route exact path="/register" component={RegisterPage} />
+            <PrivateRoute exact path="/bookmarks" component={BookmarksPage} />
+            <Route component={NotFoundPage} />
+          </Switch>
+        </div>
+      </BrowserRouter>
+    );
+  }
 }
 
-export default App;
+const mapStateToProps = state => {
+  return {
+    token: state.auth.token
+  };
+};
+
+export default connect(mapStateToProps)(App);
