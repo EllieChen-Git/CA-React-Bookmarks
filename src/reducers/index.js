@@ -1,4 +1,5 @@
 import { combineReducers } from "redux";
+import { reducer as formReducer } from "redux-form";
 import authReducer from "./auth_reducer";
 import bookmarksReducer from "./bookmarks_reducer";
 
@@ -13,6 +14,7 @@ export default combineReducers({
   auth: authReducer,
   //On this huge piece of state, we'll have a property called auth & everything inside the 'auth' property will be come from 'authReducer' ('authReducer' is a partial piece of state that is gonna be saved on 'combineReducers', which is a giant piece of state, under the property 'auth')
   //whatever return from ‘authReducer’ will be set as the global state under ‘auth’
-  bookmarks: bookmarksReducer
+  bookmarks: bookmarksReducer,
   // ... bookmarks, and other state managed by the bookmarksReducer, ...
+  form: formReducer
 });

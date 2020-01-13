@@ -1,49 +1,43 @@
 import React, { Component } from "react";
-import LocalApi from "./../../apis/local_api";
 import { connect } from "react-redux";
-import { setBookmarks } from "./../../actions";
+import { createBookmarks } from "./../../actions";
+import { Field, reduxForm } from "redux-form";
 
 class BookmarksForm extends Component {
   state = {
-    title: "",
-    url: "",
     errorMessage: null
   };
 
-  onInputChange = event => {
-    const { name, value } = event.target;
-    this.setState({ [name]: value });
-  };
-
-  onFormSubmit = async event => {
-    event.preventDefault();
-    const { title, url } = this.state;
-    const { setBookmarks } = this.props;
+  onFormSubmit = async formValues => {
+    // event.preventDefault();  //redux form: auto prevent form from submmit
+    const { title, url } = formValues;
+    const { createBookmarks } = this.props;
 
     try {
-      const response = await LocalApi.post("/bookmarks", { title, url });
-
-      setBookmarks(response.data);
+      await createBookmarks({ title, url });
     } catch (error) {
       this.setState({ errorMessage: error.message });
     }
   };
 
   render() {
-    const { title, url, errorMessage } = this.state;
+    const { errorMessage } = this.state;
+    const { handleSubmit } = this.props; //from redux form
     return (
       <>
         {errorMessage}
         {/* put 'onSubmit' on the form tag, instead of the submit button (coz you
         can also submit the form with enter key) */}
-        <form onSubmit={this.onFormSubmit}>
+        <form onSubmit={handleSubmit(this.onFormSubmit)}>
           <div>
             <label>Title</label>
-            <input name="title" value={title} onChange={this.onInputChange} />
+            <Field name="title" component="input" type="text" />
+            {/* <input name="title" value={title} onChange={this.onInputChange} /> */}
           </div>
           <div>
             <label>Url</label>
-            <input name="url" value={url} onChange={this.onInputChange} />
+            <Field name="url" component="input" type="text" />
+            {/* <input name="url" value={url} onChange={this.onInputChange} /> */}
           </div>
           <input type="submit" value="Create New Bookmark" />
         </form>
@@ -52,6 +46,10 @@ class BookmarksForm extends Component {
   }
 }
 
-export default connect(null, { setBookmarks })(BookmarksForm);
+const WrappedBookmarkForm = reduxForm({
+  form: "bookmark" // required property: form, and we call it bookmark
+})(BookmarksForm); //higher order component for BookmarkForm
+
+export default connect(null, { createBookmarks })(WrappedBookmarkForm);
 //1st: any piece of global state from redux: null (doesn't need)
 //action creator from redux: setBookmarks
