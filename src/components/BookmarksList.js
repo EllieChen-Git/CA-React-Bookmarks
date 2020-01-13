@@ -1,21 +1,44 @@
-import React from "react";
+import React, { Component } from "react";
 import { connect } from "react-redux";
+import { fetchBookmarks } from "./../actions";
 
-const BookmarksList = props => {
-  const { bookmarks } = props;
+class BookmarksList extends Component {
+  componentDidMount() {
+    this.props.fetchBookmarks();
+  }
 
-  return (
-    <ul>
-      {bookmarks.map(bookmark => {
-        return (
-          <li key={`${bookmark.title}#${bookmark.url}`}>
-            {bookmark.title} - {bookmark.url}
-          </li>
-        );
-      })}
-    </ul>
-  );
-};
+  render() {
+    const { bookmarks } = this.props;
+
+    return (
+      <ul>
+        {bookmarks.map(bookmark => {
+          return (
+            <li key={`${bookmark.title}#${bookmark.url}`}>
+              {bookmark.title} - {bookmark.url}
+            </li>
+          );
+        })}
+      </ul>
+    );
+  }
+}
+
+// const BookmarksList = props => {
+//   const { bookmarks } = props;
+
+//   return (
+//     <ul>
+//       {bookmarks.map(bookmark => {
+//         return (
+//           <li key={`${bookmark.title}#${bookmark.url}`}>
+//             {bookmark.title} - {bookmark.url}
+//           </li>
+//         );
+//       })}
+//     </ul>
+//   );
+// };
 
 const mapStateToProps = state => {
   return {
@@ -26,4 +49,4 @@ const mapStateToProps = state => {
 
 // As the first argument passed in to connect, mapStateToProps is used for selecting the part of the data from the store that the connected component needs. It’s frequently referred to as just mapState for short.(https://react-redux.js.org/using-react-redux/connect-mapstate)
 
-export default connect(mapStateToProps)(BookmarksList);
+export default connect(mapStateToProps, { fetchBookmarks })(BookmarksList);
